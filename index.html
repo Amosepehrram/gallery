@@ -4,13 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>گالری کلاس</title>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
 :root{--bg:#eef1f5;--card:#fff;--ink:#1b2a41;--mut:#6b7a90;--acc:#e4572e;--line:#d5dbe4}
 @media(prefers-color-scheme:dark){:root{--bg:#121a26;--card:#1b2635;--ink:#e8edf4;--mut:#93a1b5;--line:#2c3a4e}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.7 Vazirmatn,Tahoma,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.7 Vazirmatn,Tahoma,Segoe UI,sans-serif}
 header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--card)}
 header b{font-weight:900;font-size:20px}
 main{max-width:980px;margin:0 auto;padding:20px}
@@ -50,11 +49,16 @@ let me = null, mode = "login";
 const esc = s => (s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 async function init() {
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) return authView();
-  const { data } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
-  me = { ...data, id: session.user.id };
-  albumsView();
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return authView();
+    const { data, error } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
+    if (error || !data) { await sb.auth.signOut(); return authView(); }
+    me = { ...data, id: session.user.id };
+    albumsView();
+  } catch (e) {
+    $app.innerHTML = `<div class="box auth"><p>اتصال به سرور برقرار نشد.</p><button onclick="location.reload()">تلاش دوباره</button></div>`;
+  }
 }
 
 function shell(inner) {
@@ -77,10 +81,19 @@ function authView() {
   document.getElementById("sw").onclick = e => { e.preventDefault(); mode = su ? "login" : "signup"; authView(); };
   document.getElementById("f").onsubmit = async e => {
     e.preventDefault();
+    const btn = e.target.querySelector("button"); btn.disabled = true; btn.textContent = "صبر کن...";
     const email = v("email"), password = v("pass");
-    const r = su
-      ? await sb.auth.signUp({ email, password, options: { data: { name: v("name"), invite: v("invite") } } })
-      : await sb.auth.signInWithPassword({ email, password });
+    let r;
+    try {
+      const call = su
+        ? sb.auth.signUp({ email, password, options: { data: { name: v("name"), invite: v("invite") } } })
+        : sb.auth.signInWithPassword({ email, password });
+      r = await Promise.race([call, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 20000))]);
+    } catch (x) {
+      btn.disabled = false; btn.textContent = su ? "ثبت‌نام" : "ورود";
+      return err("اتصال به سرور کند است یا قطع است. دوباره امتحان کن (شاید فیلترشکن لازم باشد).");
+    }
+    btn.disabled = false; btn.textContent = su ? "ثبت‌نام" : "ورود";
     if (r.error) return err(/database error|invite/i.test(r.error.message) ? "کد دعوت اشتباه است" : "خطا: " + r.error.message);
     init();
   };

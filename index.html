@@ -18,6 +18,7 @@ button,input,textarea{font:inherit;color:inherit}
 input,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);margin-bottom:10px}
 button{cursor:pointer;border:0;border-radius:8px;padding:9px 16px;background:var(--acc);color:#fff;font-weight:700}
 button.ghost{background:none;color:var(--mut);border:1px solid var(--line)}
+#online{color:#2e9e5b;border-color:#2e9e5b;margin-inline-end:8px}
 button.del{background:none;color:#c0392b;padding:2px 8px}
 :focus-visible{outline:3px solid var(--acc);outline-offset:2px}
 .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
@@ -55,16 +56,40 @@ async function init() {
     const { data, error } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
     if (error || !data) { await sb.auth.signOut(); return authView(); }
     me = { ...data, id: session.user.id };
+    startPresence();
     albumsView();
   } catch (e) {
     $app.innerHTML = `<div class="box auth"><p>اتصال به سرور برقرار نشد.</p><button onclick="location.reload()">تلاش دوباره</button></div>`;
   }
 }
 
+// ===== kasai ke online hastan (Supabase Realtime Presence) =====
+let ch = null, onlineNames = [];
+function startPresence() {
+  if (ch) return;
+  ch = sb.channel("online", { config: { presence: { key: me.id } } });
+  ch.on("presence", { event: "sync" }, () => {
+    onlineNames = Object.values(ch.presenceState()).map(a => a[0].name);
+    showOnline();
+  });
+  ch.subscribe(st => { if (st === "SUBSCRIBED") ch.track({ name: me.name }); });
+}
+function showOnline() {
+  const el = document.getElementById("online");
+  if (el) el.textContent = "● " + onlineNames.length + " نفر آنلاین";
+}
+
 function shell(inner) {
-  $app.innerHTML = `<header><b>گالری کلاس</b><span>${esc(me.name)}${me.is_admin ? " (ادمین)" : ""}
+  $app.innerHTML = `<header><b>گالری کلاس</b><span>
+    <button class="ghost" id="online" title="لیست آنلاین‌ها"></button>
+    ${esc(me.name)}${me.is_admin ? " (ادمین)" : ""}
     <button class="ghost" id="out">خروج</button></span></header><main>${inner}</main>`;
-  document.getElementById("out").onclick = async () => { await sb.auth.signOut(); me = null; authView(); };
+  showOnline();
+  document.getElementById("online").onclick = () => alert("آنلاین‌ها:\n" + onlineNames.join("\n"));
+  document.getElementById("out").onclick = async () => {
+    if (ch) { await sb.removeChannel(ch); ch = null; }
+    await sb.auth.signOut(); me = null; authView();
+  };
 }
 
 function authView() {

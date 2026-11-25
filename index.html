@@ -2,84 +2,84 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>گالری کلاس</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
-:root{--bg:#f5f1e8;--card:#fffdf8;--ink:#17140f;--mut:#80766a;--acc:#9c7a35;--on:#fff;--line:#e3dccd;--glow:#e9d9b0aa;--sh:0 22px 50px -28px #3a2c0f66}
-@media(prefers-color-scheme:dark){:root{--bg:#09090b;--card:#121215;--ink:#f1ece0;--mut:#8d877b;--acc:#d4b46a;--on:#14100a;--line:#26262b;--glow:#d4b46a22;--sh:0 30px 60px -30px #000}}
+:root{--bg:#0f0f10;--panel:#212121;--line:#303030;--ink:#fff;--mut:#9b9b9b;--acc:#8774e1;--in:#212121;--out:#766ac8;--outink:#fff;--hover:#2b2b2b;--wp:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='none' stroke='%23fff' stroke-opacity='.07' stroke-width='2'%3E%3Ccircle cx='20' cy='22' r='9'/%3E%3Cpath d='M70 14l6 12 13 2-10 9 3 13-12-7-12 7 3-13-10-9 13-2z'/%3E%3Cpath d='M12 78c8-10 16 10 24 0s16 10 24 0'/%3E%3Crect x='80' y='70' width='22' height='22' rx='5'/%3E%3Cpath d='M44 104l10-14 10 14z'/%3E%3C/svg%3E")}
+@media(prefers-color-scheme:light){:root{--bg:#dfe8d6;--panel:#fff;--line:#e6e6e6;--ink:#000;--mut:#707579;--acc:#3390ec;--in:#fff;--out:#eeffde;--outink:#000;--hover:#f1f1f1;--wp:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='none' stroke='%23000' stroke-opacity='.06' stroke-width='2'%3E%3Ccircle cx='20' cy='22' r='9'/%3E%3Cpath d='M70 14l6 12 13 2-10 9 3 13-12-7-12 7 3-13-10-9 13-2z'/%3E%3Cpath d='M12 78c8-10 16 10 24 0s16 10 24 0'/%3E%3Crect x='80' y='70' width='22' height='22' rx='5'/%3E%3Cpath d='M44 104l10-14 10 14z'/%3E%3C/svg%3E")}}
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(900px 420px at 50% -140px,var(--glow),transparent 70%),var(--bg);color:var(--ink);font:400 16px/1.8 Tahoma,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
-header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-header b,.brand{flex:1;text-align:center;font-weight:900;font-size:19px;letter-spacing:.5px}
-header b::before,.brand::before{content:"◆ ";color:var(--acc);font-size:11px;vertical-align:middle}
-main{max-width:1080px;margin:0 auto;padding:38px 22px 90px}
-h2{display:flex;align-items:center;gap:16px;font-weight:900;font-size:26px;margin:0 0 22px}
-h2::after{content:"";flex:1;height:1px;background:linear-gradient(to left,var(--line),transparent)}
-button,input,textarea{font:inherit;color:inherit}
-input,textarea{width:100%;padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:transparent;margin-bottom:12px;transition:border-color .2s}
-input:focus,textarea:focus{outline:0;border-color:var(--acc)}
-button{cursor:pointer;border:0;border-radius:999px;padding:10px 24px;background:var(--acc);color:var(--on);font-weight:700;transition:transform .2s,filter .2s}
-button:hover{transform:translateY(-1px);filter:brightness(1.08)}
-button.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
-button.del{background:none;color:#d6455d;padding:2px 10px;font-size:13px;font-weight:400}
-:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
-label{display:block;font-size:12px;letter-spacing:.5px;color:var(--mut);margin:0 4px 4px}
-.box{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:26px;box-shadow:var(--sh)}
-.auth{max-width:400px;margin:9vh auto}.brand{font-size:30px;margin-bottom:6px}
-.auth h2{justify-content:center;font-size:17px;color:var(--mut);font-weight:400}.auth h2::after{display:none}
-.row{display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}.row input{margin:0}
-.err{color:#d6455d;min-height:24px;font-size:14px}
-.empty{color:var(--mut);padding:44px 0;text-align:center;border:1px dashed var(--line);border-radius:22px;column-span:all}
-.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;border:1.5px dashed var(--line);border-radius:20px;padding:30px;cursor:pointer;color:var(--mut);margin:0 0 14px;font-size:15px;transition:.2s}
-.drop:hover{border-color:var(--acc);color:var(--acc)}.drop img{max-height:200px;border-radius:14px}
-.grid{counter-reset:a;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
-.album{position:relative;min-height:160px;padding:22px;border-radius:24px;background:var(--card);border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:.3s;font-weight:900;font-size:21px}
-.album::before{counter-increment:a;content:counter(a,decimal-leading-zero);font-size:13px;letter-spacing:3px;color:var(--acc);font-weight:400}
-.album::after{content:"←";position:absolute;bottom:20px;left:22px;color:var(--acc);transition:transform .3s}
-.album:hover{transform:translateY(-5px);border-color:var(--acc);box-shadow:var(--sh)}.album:hover::after{transform:translateX(-6px)}
-.album .del{position:absolute;top:14px;left:14px}
-.feed{columns:3 270px;column-gap:22px}
-.photo{break-inside:avoid;margin-bottom:22px;background:var(--card);border:1px solid var(--line);border-radius:26px;overflow:hidden;box-shadow:var(--sh)}
-.photo img{width:100%;display:block;cursor:zoom-in}
-.ph{display:flex;align-items:center;gap:10px;padding:14px 16px}.ph b{font-size:14px}.ph .del{margin-inline-start:auto}
-.cap{padding:14px 18px 18px;font-size:14.5px;color:var(--mut)}.cap b{color:var(--ink)}
-.av{display:inline-grid;place-items:center;flex:none;width:34px;height:34px;border-radius:50%;background:var(--acc);color:var(--on);font-weight:700;box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--acc)}
-.av.big{width:50px;height:50px;font-size:20px}
-.sheet{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px 20px;font-size:14px;color:var(--mut)}
-.sheet b{display:inline-block;color:var(--ink);font-size:17px;margin-bottom:8px}.sheet .del{float:left}
-.sheet div{padding:5px 0;border-top:1px solid var(--line)}
-#qs{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:4px 14px;margin:14px 0}
-.chat{height:58vh;overflow:auto;display:flex;flex-direction:column;gap:8px}
-.msg{max-width:78%;padding:8px 15px;border-radius:20px 20px 20px 6px;background:var(--bg);border:1px solid var(--line);word-break:break-word}
-.msg small{display:block;color:var(--mut);font-size:12px}
-.msg.me{align-self:flex-end;background:var(--acc);color:var(--on);border:0;border-radius:20px 20px 6px 20px}
-.msg.me small{color:inherit;opacity:.75}.msg .del{color:inherit;font-size:12px}
-#online{color:var(--acc);border-color:var(--acc);font-size:13px;padding:5px 14px}
-.ic{background:none;color:var(--ink);font-size:26px;padding:0 8px;line-height:1}
-#ov{position:fixed;inset:0;background:#0009;opacity:0;pointer-events:none;transition:opacity .25s;z-index:20;backdrop-filter:blur(3px)}
-#dr{position:fixed;top:0;bottom:0;right:0;width:290px;max-width:84vw;background:var(--card);border-left:1px solid var(--line);z-index:21;transform:translateX(100%);transition:transform .3s;padding:26px 18px;display:flex;flex-direction:column;gap:4px}
-body.open #ov{opacity:1;pointer-events:auto}body.open #dr{transform:none}
-#dr .who{display:flex;gap:14px;align-items:center;padding-bottom:20px;margin-bottom:12px;border-bottom:1px solid var(--line)}
-#dr small{color:var(--mut)}
-#dr .it{background:none;color:var(--ink);text-align:right;font-size:17px;padding:13px 14px;border-radius:14px;width:100%}
-#dr .it:hover{background:var(--bg);transform:none}#dr .out{margin-top:auto;color:#d6455d}
-#big{position:fixed;inset:0;background:#000d;backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:30}
-#big img{max-width:94vw;max-height:94vh;border-radius:16px}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.6 Tahoma,"Segoe UI",sans-serif}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+input{width:100%;border:1px solid var(--line);background:transparent;border-radius:12px;padding:11px 14px;outline:0}
+input:focus{border-color:var(--acc)}
+.ic{font-size:22px;width:42px;height:42px;border-radius:50%;display:inline-grid;place-items:center;color:var(--mut);cursor:pointer;flex:none}
+.ic:hover,.ic.on{background:var(--hover);color:var(--acc)}
+.tg{display:flex;height:100dvh;direction:ltr}
+#side{width:360px;flex:none;background:var(--panel);display:flex;flex-direction:column;border-right:1px solid var(--line);position:relative;direction:rtl}
+.top{display:flex;gap:8px;align-items:center;padding:10px}
+.top input{border-radius:999px;background:var(--hover);border:0}
+#menu{position:absolute;top:56px;right:10px;left:10px;z-index:5;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:8px;box-shadow:0 14px 40px #0008}
+#menu b{display:block;padding:8px 12px}#menu small{color:var(--mut);padding:0 12px}
+#menu button{display:block;width:100%;text-align:right;padding:11px 12px;border-radius:10px}#menu button:hover{background:var(--hover)}
+#list{overflow:auto;flex:1;padding:0 8px 10px}
+.it{display:flex;gap:12px;align-items:center;width:100%;text-align:right;padding:9px 10px;border-radius:14px}
+.it:hover{background:var(--hover)}.it.act{background:var(--acc);color:#fff}.it.act small{color:#ffffffcc}
+.it div{min-width:0;flex:1}.it b{display:block;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+small{color:var(--mut);font-size:13px}
+.av{display:inline-grid;place-items:center;flex:none;width:52px;height:52px;border-radius:50%;color:#fff;font-weight:700;font-size:20px}
+#pane{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--bg) var(--wp);direction:rtl}
+.hd{display:flex;align-items:center;gap:10px;margin:10px 12px 0;padding:6px 12px 6px 8px;background:var(--panel);border-radius:22px;box-shadow:0 2px 12px #0003}
+.hd .av{width:42px;height:42px;font-size:17px}.hd div{flex:1;min-width:0}.hd b{display:block;line-height:1.3}
+.back{display:none}
+.onl{cursor:pointer;color:var(--acc)}
+.pin{display:flex;gap:10px;align-items:center;margin:8px 12px 0;padding:8px 14px;background:var(--panel);border-radius:18px;text-align:right;width:calc(100% - 24px);border-inline-start:3px solid var(--acc)}
+.pin b{display:block;color:var(--acc);font-size:13px;line-height:1.3}
+.body{flex:1;overflow:auto;padding:14px 12px;display:flex;flex-direction:column;gap:6px;direction:ltr}
+.msg{max-width:min(420px,82%);align-self:flex-start;background:var(--in);border-radius:16px 16px 16px 4px;padding:6px 10px 4px;direction:rtl;word-break:break-word;box-shadow:0 1px 2px #0003}
+.msg.own{align-self:flex-end;background:var(--out);color:var(--outink);border-radius:16px 16px 4px 16px}
+.msg>b{display:block;font-size:13.5px}.msg.own>b{display:none}
+.msg img{display:block;width:calc(100% + 20px);margin:4px -10px;max-height:380px;object-fit:cover;cursor:zoom-in}
+.msg small{display:flex;gap:8px;justify-content:flex-end;color:inherit;opacity:.6;font-size:11.5px}
+.msg small button{color:inherit;font-size:11.5px}
+.comp{display:flex;gap:8px;align-items:center;padding:10px 12px 12px}
+.comp input{background:var(--panel);border:0;border-radius:999px;padding:13px 18px}
+.send{width:46px;height:46px;border-radius:50%;background:var(--acc);color:#fff;font-size:18px;flex:none}
+.empty{margin:auto;padding:6px 14px;border-radius:999px;background:#0006;color:#fff;font-size:13px}
+.panel{background:var(--panel);border-radius:18px;padding:16px;direction:rtl;margin-bottom:10px}
+.panel .row{display:flex;gap:8px}.panel .row input{max-width:200px}
+.pb{background:var(--acc);color:#fff;border-radius:999px;padding:10px 20px;font-weight:700;margin-top:8px}
+.pb.g{background:var(--hover);color:var(--ink)}
+#qs{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px 12px;margin-top:10px}
+#qs small{display:block}
+.sheet b{display:block}.sheet div{padding:3px 0;border-top:1px solid var(--line);font-size:14px}
+.sheet button{color:#ff6b6b;font-size:13px;float:left}
+.auth{max-width:370px;margin:10vh auto;padding:0 20px;text-align:center}
+.auth .av{width:110px;height:110px;font-size:46px;background:var(--acc);margin-bottom:10px}
+.auth input{margin-bottom:12px;text-align:right}.auth .pb{width:100%;padding:13px}
+.err{color:#ff6b6b;min-height:24px;font-size:14px}.auth a{color:var(--acc)}
+#big{position:fixed;inset:0;background:#000d;display:none;align-items:center;justify-content:center;z-index:30}#big img{max-width:96vw;max-height:96vh}
+@media(max-width:800px){#side{width:100%;border:0}#pane{display:none}.tg.in #side{display:none}.tg.in #pane{display:flex}.back{display:inline-grid}}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <div id="big" onclick="this.style.display='none'"><img alt=""></div>
 <script>
-// ====== inja do ta meghdar ro az Supabase > Project Settings > API bezar ======
+// ====== Supabase ======
 const SUPABASE_URL = "https://dveinkpgdnehsfsyiool.supabase.co";
 const SUPABASE_KEY = "sb_publishable_KkK80KPNkVMaMZwFc1rijA_CmAiv6iU";
-// ==============================================================================
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const $app = document.getElementById("app");
-let me = null, mode = "login";
-const esc = s => (s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $ = id => document.getElementById(id), $app = $("app");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const v = id => $(id).value.trim();
+const COLS = ["#e17076","#e0903f","#a695e7","#5fae4a","#4ba9ae","#4f9bd3","#d9638f"];
+const col = s => COLS[[...String(s)].reduce((a, c) => a + c.charCodeAt(0), 0) % 7];
+const av = n => `<span class="av" style="background:${col(n)}">${esc((n || "?")[0])}</span>`;
+const hhmm = t => new Date(t).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" });
+let me = null, mode = "login", albums = [], cur = null, presCh = null, chatCh = null, onlineNames = [], showAns = false;
 
 async function init() {
   try {
@@ -88,101 +88,105 @@ async function init() {
     const { data, error } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
     if (error || !data) { await sb.auth.signOut(); return authView(); }
     me = { ...data, id: session.user.id };
-    startPresence();
-    albumsView();
+    startPresence(); layout(); await loadAlbums();
   } catch (e) {
-    $app.innerHTML = `<div class="box auth"><p>اتصال به سرور برقرار نشد.</p><button onclick="location.reload()">تلاش دوباره</button></div>`;
+    $app.innerHTML = `<div class="auth"><p>اتصال به سرور برقرار نشد.</p><button class="pb" onclick="location.reload()">تلاش دوباره</button></div>`;
   }
 }
 
-// ===== kasai ke online hastan (Supabase Realtime Presence) =====
-let ch = null, onlineNames = [];
-function startPresence() {
-  if (ch) return;
-  ch = sb.channel("online", { config: { presence: { key: me.id } } });
-  ch.on("presence", { event: "sync" }, () => {
-    onlineNames = Object.values(ch.presenceState()).map(a => a[0].name);
-    showOnline();
-  });
-  ch.subscribe(st => { if (st === "SUBSCRIBED") ch.track({ name: me.name }); });
-}
-function showOnline() {
-  const el = document.getElementById("online");
-  if (el) el.textContent = "● " + onlineNames.length + " نفر آنلاین";
-}
-
-function shell(inner) {
-  stopChat();
-  document.body.classList.remove("open");
-  const ini = esc((me.name || "?")[0]);
-  $app.innerHTML = `<header><button class="ic" id="mn" aria-label="منو">☰</button><b>گالری کلاس</b>
-    <button class="ghost" id="online" title="لیست آنلاین‌ها"></button></header>
-    <div id="ov"></div>
-    <aside id="dr"><div class="who"><span class="av big">${ini}</span><div><b>${esc(me.name)}</b><br><small>${me.is_admin ? "ادمین" : "کاربر"}</small></div></div>
-      <button class="it" id="na">آلبوم‌ها</button><button class="it" id="nc">چت</button>
-      <button class="it out" id="out">خروج</button></aside><main>${inner}</main>`;
-  const close = () => document.body.classList.remove("open");
-  document.getElementById("mn").onclick = () => document.body.classList.toggle("open");
-  document.getElementById("ov").onclick = close;
-  showOnline();
-  document.getElementById("na").onclick = albumsView;
-  document.getElementById("nc").onclick = chatView;
-  document.getElementById("online").onclick = () => alert("آنلاین‌ها:\n" + onlineNames.join("\n"));
-  document.getElementById("out").onclick = async () => {
-    if (ch) { await sb.removeChannel(ch); ch = null; }
-    await sb.auth.signOut(); me = null; authView();
-  };
-}
-
+// ===== auth =====
 function authView() {
   const su = mode === "signup";
-  $app.innerHTML = `<form class="box auth" id="f"><div class="brand">گالری کلاس</div><h2>${su ? "ساخت حساب" : "ورود"}</h2>
+  $app.innerHTML = `<form class="auth" id="f"><span class="av">◆</span><h2>گالری کلاس</h2>
     ${su ? `<input id="name" placeholder="نام و نام خانوادگی" required>` : ""}
     <input id="email" type="email" placeholder="ایمیل" required dir="ltr">
-    <input id="pass" type="password" placeholder="رمز عبور (حداقل ۶ کاراکتر)" minlength="6" required dir="ltr">
+    <input id="pass" type="password" placeholder="رمز عبور" minlength="6" required dir="ltr">
     ${su ? `<input id="invite" placeholder="کد دعوت" required dir="ltr">` : ""}
     <div class="err" id="err"></div>
-    <button style="width:100%">${su ? "ثبت‌نام" : "ورود"}</button>
-    <p style="text-align:center"><a href="#" id="sw">${su ? "حساب دارم، ورود" : "حساب ندارم، ثبت‌نام با کد دعوت"}</a></p></form>`;
-  const err = m => document.getElementById("err").textContent = m;
-  document.getElementById("sw").onclick = e => { e.preventDefault(); mode = su ? "login" : "signup"; authView(); };
-  document.getElementById("f").onsubmit = async e => {
+    <button class="pb">${su ? "ثبت‌نام" : "ورود"}</button>
+    <p><a href="#" id="sw">${su ? "حساب دارم، ورود" : "ثبت‌نام با کد دعوت"}</a></p></form>`;
+  $("sw").onclick = e => { e.preventDefault(); mode = su ? "login" : "signup"; authView(); };
+  $("f").onsubmit = async e => {
     e.preventDefault();
-    const btn = e.target.querySelector("button"); btn.disabled = true; btn.textContent = "صبر کن...";
-    const email = v("email"), password = v("pass");
+    const btn = e.target.querySelector(".pb"), lbl = btn.textContent;
+    btn.disabled = true; btn.textContent = "صبر کن...";
     let r;
     try {
-      const call = su
-        ? sb.auth.signUp({ email, password, options: { data: { name: v("name"), invite: v("invite") } } })
-        : sb.auth.signInWithPassword({ email, password });
-      r = await Promise.race([call, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 20000))]);
-    } catch (x) {
-      btn.disabled = false; btn.textContent = su ? "ثبت‌نام" : "ورود";
-      return err("اتصال به سرور کند است یا قطع است. دوباره امتحان کن (شاید فیلترشکن لازم باشد).");
-    }
-    btn.disabled = false; btn.textContent = su ? "ثبت‌نام" : "ورود";
-    if (r.error) return err(/database error|invite/i.test(r.error.message) ? "کد دعوت اشتباه است" : "خطا: " + r.error.message);
+      const email = v("email"), password = v("pass");
+      const call = su ? sb.auth.signUp({ email, password, options: { data: { name: v("name"), invite: v("invite") } } })
+                      : sb.auth.signInWithPassword({ email, password });
+      r = await Promise.race([call, new Promise((_, j) => setTimeout(() => j(0), 20000))]);
+    } catch { btn.disabled = false; btn.textContent = lbl; return $("err").textContent = "اتصال کند است یا قطع است (شاید فیلترشکن لازم باشد)."; }
+    btn.disabled = false; btn.textContent = lbl;
+    if (r.error) return $("err").textContent = /database error|invite/i.test(r.error.message) ? "کد دعوت اشتباه است" : "خطا: " + r.error.message;
     init();
   };
 }
-const v = id => document.getElementById(id).value.trim();
 
-// ===== chat room =====
-let chatCh = null;
+// ===== presence =====
+function startPresence() {
+  if (presCh) return;
+  presCh = sb.channel("online", { config: { presence: { key: me.id } } });
+  presCh.on("presence", { event: "sync" }, () => {
+    onlineNames = Object.values(presCh.presenceState()).map(a => a[0].name); showOnline();
+  });
+  presCh.subscribe(st => { if (st === "SUBSCRIBED") presCh.track({ name: me.name }); });
+}
+function showOnline() {
+  document.querySelectorAll(".onl").forEach(el => { el.textContent = onlineNames.length + " نفر آنلاین"; el.onclick = () => alert("آنلاین‌ها:\n" + onlineNames.join("\n")); });
+}
+
+// ===== layout + sidebar =====
+function layout() {
+  $app.innerHTML = `<div class="tg" id="tg"><aside id="side"><div class="top"><button class="ic" id="mn">☰</button><input id="q" placeholder="جستجو" autocomplete="off"></div>
+    <div id="menu" hidden>${av(me.name).replace('class="av"', 'class="av" style="width:44px;height:44px;font-size:18px;float:right;margin:0 4px 6px 10px;background:' + col(me.name) + '"')}<b>${esc(me.name)}</b><small>${me.is_admin ? "ادمین" : "کاربر"}</small><hr style="border:0;border-top:1px solid var(--line);clear:both">
+      ${me.is_admin ? `<button id="na">＋ آلبوم جدید</button>` : ""}<button id="out" style="color:#ff6b6b">خروج</button></div>
+    <div id="list"></div></aside><section id="pane"><div class="empty">یک گفتگو را انتخاب کن</div></section></div>`;
+  $("mn").onclick = () => $("menu").hidden = !$("menu").hidden;
+  $("q").oninput = renderList;
+  $("out").onclick = async () => { stopChat(); if (presCh) { await sb.removeChannel(presCh); presCh = null; } await sb.auth.signOut(); me = null; cur = null; authView(); };
+  if (me.is_admin) $("na").onclick = async () => {
+    $("menu").hidden = true;
+    const t = (prompt("نام آلبوم جدید:") || "").trim(); if (!t) return;
+    await sb.from("albums").insert({ title: t }); loadAlbums();
+  };
+}
+async function loadAlbums() { const { data } = await sb.from("albums").select("*").order("created_at", { ascending: false }); albums = data || []; renderList(); }
+function renderList() {
+  const q = $("q").value.trim(), act = (t, id) => cur && cur.t === t && cur.id === id ? " act" : "";
+  const items = [`<button class="it${act("chat")}" data-k="chat">${av("چت")}<div><b>چت عمومی</b><small>گفتگوی همه</small></div></button>`]
+    .concat(albums.filter(a => a.title.includes(q)).map(a => `<button class="it${act("a", a.id)}" data-k="a" data-id="${a.id}">${av(a.title)}<div><b>${esc(a.title)}</b><small>آلبوم</small></div></button>`));
+  $("list").innerHTML = items.join("");
+  document.querySelectorAll(".it").forEach(b => b.onclick = () => {
+    $("menu").hidden = true;
+    b.dataset.k === "chat" ? openChat() : openAlbum(albums.find(a => a.id == b.dataset.id));
+  });
+}
+function hdr(title, extra = "") {
+  return `<div class="hd"><button class="ic back" id="bk">➜</button>${av(title)}<div><b>${esc(title)}</b><small class="onl"></small></div>${extra}</div>`;
+}
+function bindHdr() {
+  $("tg").classList.add("in"); $("bk").onclick = () => { $("tg").classList.remove("in"); cur = null; stopChat(); renderList(); };
+  showOnline(); renderList();
+}
+const bottom = () => { const b = $("body"); if (b) b.scrollTop = b.scrollHeight; };
+function zoom() { document.querySelectorAll(".msg img").forEach(i => i.onclick = () => { const b = $("big"); b.firstElementChild.src = i.src; b.style.display = "flex"; }); }
+
+// ===== chat =====
 function stopChat() { if (chatCh) { sb.removeChannel(chatCh); chatCh = null; } }
-async function chatView() {
+async function openChat() {
+  stopChat(); cur = { t: "chat" };
   const { data: msgs } = await sb.from("messages").select("*").order("created_at", { ascending: false }).limit(100);
-  shell(`<h2>چت</h2><div class="box"><div class="chat" id="chat"></div>
-    <form class="row" id="cf" style="margin:12px 0 0"><input id="ci" maxlength="500" placeholder="پیام..." autocomplete="off"><button>ارسال</button></form></div>`);
-  const box = document.getElementById("chat");
+  $("pane").innerHTML = `${hdr("چت عمومی")}<div class="body" id="body"></div>
+    <form class="comp" id="cf"><input id="ci" maxlength="500" placeholder="پیام..." autocomplete="off"><button class="send">➤</button></form>`;
+  bindHdr();
+  const box = $("body");
   const add = m => {
     if (box.querySelector(`[data-m="${m.id}"]`)) return;
     const d = document.createElement("div");
-    d.className = "msg" + (m.user_id === me.id ? " me" : "");
-    d.dataset.m = m.id;
-    d.innerHTML = `<small>${esc(m.user_name)}</small>${esc(m.body)}` +
-      (me.is_admin || m.user_id === me.id ? ` <button class="del" data-x="${m.id}">حذف</button>` : "");
-    box.appendChild(d); box.scrollTop = box.scrollHeight;
+    d.className = "msg" + (m.user_id === me.id ? " own" : ""); d.dataset.m = m.id;
+    d.innerHTML = `<b style="color:${col(m.user_name)}">${esc(m.user_name)}</b>${esc(m.body)}<small>${hhmm(m.created_at)}${me.is_admin || m.user_id === me.id ? `<button data-x="${m.id}">حذف</button>` : ""}</small>`;
+    box.appendChild(d); bottom();
   };
   (msgs || []).reverse().forEach(add);
   box.onclick = async e => { if (e.target.dataset.x) await sb.from("messages").delete().eq("id", e.target.dataset.x); };
@@ -190,122 +194,81 @@ async function chatView() {
     .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, p => add(p.new))
     .on("postgres_changes", { event: "DELETE", schema: "public", table: "messages" }, p => box.querySelector(`[data-m="${p.old.id}"]`)?.remove())
     .subscribe();
-  document.getElementById("cf").onsubmit = async e => {
-    e.preventDefault();
-    const t = v("ci"); if (!t) return;
-    document.getElementById("ci").value = "";
+  $("cf").onsubmit = async e => {
+    e.preventDefault(); const t = v("ci"); if (!t) return; $("ci").value = "";
     const r = await sb.from("messages").insert({ user_id: me.id, user_name: me.name, body: t });
     if (r.error) alert("ارسال نشد");
   };
 }
 
-async function albumsView() {
-  const { data: albums } = await sb.from("albums").select("*").order("created_at", { ascending: false });
-  shell(`<h2>آلبوم‌ها</h2>
-    ${me.is_admin ? `<div class="row"><input id="t" placeholder="نام آلبوم جدید، مثلا: امتحان علوم"><button id="add">ساخت</button></div>` : ""}
-    <div class="grid">${albums.map(a => `<div class="album" data-id="${a.id}" data-t="${esc(a.title)}"><span>${esc(a.title)}</span>
-      ${me.is_admin ? `<button class="del" data-del="${a.id}">حذف</button>` : ""}</div>`).join("") || `<div class="empty">هنوز آلبومی نیست.</div>`}</div>`);
-  document.querySelectorAll(".album").forEach(el => el.onclick = e => {
-    if (e.target.dataset.del) return;
-    photosView(+el.dataset.id, el.dataset.t);
-  });
-  document.querySelectorAll("[data-del]").forEach(b => b.onclick = async () => {
-    if (!confirm("آلبوم و همه عکس‌هاش حذف بشه؟")) return;
-    const { data: ps } = await sb.from("photos").select("path").eq("album_id", b.dataset.del);
-    if (ps.length) await sb.storage.from("photos").remove(ps.map(p => p.path));
-    await sb.from("albums").delete().eq("id", b.dataset.del);
-    albumsView();
-  });
-  if (me.is_admin) document.getElementById("add").onclick = async () => {
-    if (!v("t")) return;
-    await sb.from("albums").insert({ title: v("t") });
-    albumsView();
-  };
-}
-
-async function photosView(id, title) {
-  const { data: photos } = await sb.from("photos").select("*").eq("album_id", id).order("created_at", { ascending: false });
-  const { data: answers } = await sb.from("answers").select("*").eq("album_id", id).order("updated_at");
+// ===== album =====
+async function openAlbum(a) { stopChat(); cur = { t: "a", id: a.id, title: a.title }; showAns = false; await renderAlbum(); }
+async function renderAlbum() {
+  const { id, title } = cur;
+  const [{ data: photos }, { data: answers }] = await Promise.all([
+    sb.from("photos").select("*").eq("album_id", id).order("created_at"),
+    sb.from("answers").select("*").eq("album_id", id).order("updated_at")]);
   const mine = (answers || []).find(x => x.user_id === me.id);
-  shell(`<p><button class="ghost" id="back">بازگشت</button></p><h2>${esc(title)}</h2>
-    <div class="box" style="margin-bottom:34px"><label class="drop" for="file"><span>＋ انتخاب عکس</span></label><input type="file" id="file" accept="image/*" hidden>
-    <textarea id="desc" rows="2" placeholder="توضیح (اختیاری)"></textarea>
-    <button id="up">آپلود عکس</button> <span class="err" id="err"></span></div>
-    <div class="feed">${photos.map(p => {
-      const url = sb.storage.from("photos").getPublicUrl(p.path).data.publicUrl;
-      return `<div class="photo"><div class="ph"><span class="av">${esc((p.uploader_name || "?")[0])}</span><b>${esc(p.uploader_name)}</b>
-        ${me.is_admin || p.user_id === me.id ? `<button class="del" data-p="${p.id}" data-path="${esc(p.path)}">حذف</button>` : ""}</div>
-        <img src="${url}" alt="" loading="lazy">
-        ${p.description ? `<div class="cap"><b>${esc(p.uploader_name)}</b> ${esc(p.description)}</div>` : ""}</div>`;
-    }).join("") || `<div class="empty">هنوز عکسی نیست. اولین نفر باش.</div>`}</div>
-    <h2 style="margin-top:34px">جواب‌ها</h2>
-    <div class="box" style="margin-bottom:18px">
-      <div class="row"><input id="cnt" type="number" min="1" max="100" placeholder="تعداد سوال‌های امتحان" style="max-width:220px"><button id="mk" class="ghost">ساخت فرم</button></div>
-      <div id="qs"></div><button id="save" hidden>ذخیره جواب‌های من</button>
-    </div>
-    <div class="grid">${(answers || []).map(x => `<div class="sheet"><b>${esc(x.user_name)}</b>
-      ${me.is_admin || x.user_id === me.id ? `<button class="del" data-a="${x.id}">حذف</button>` : ""}
-      ${x.items.map((t, i) => `<div>جواب سوال ${i + 1}: ${esc(t) || "—"}</div>`).join("")}</div>`).join("") || `<div class="empty">هنوز کسی جواب نگذاشته.</div>`}</div>`);
-  const qs = document.getElementById("qs"), cnt = document.getElementById("cnt"), save = document.getElementById("save");
-  const renderQs = (n, vals = []) => {
-    qs.innerHTML = Array.from({ length: n }, (_, i) => `<div><label>سوال ${i + 1}</label><input data-q value="${esc(vals[i] || "")}"></div>`).join("");
-    save.hidden = false;
+  const bub = p => {
+    const url = sb.storage.from("photos").getPublicUrl(p.path).data.publicUrl;
+    return `<div class="msg${p.user_id === me.id ? " own" : ""}"><b style="color:${col(p.uploader_name)}">${esc(p.uploader_name)}</b><img src="${url}" alt="" loading="lazy">
+      ${p.description ? `<div>${esc(p.description)}</div>` : ""}<small>${hhmm(p.created_at)}${me.is_admin || p.user_id === me.id ? `<button data-p="${p.id}" data-path="${esc(p.path)}">حذف</button>` : ""}</small></div>`;
   };
-  if (mine) { cnt.value = mine.items.length; renderQs(mine.items.length, mine.items); }
-  document.getElementById("mk").onclick = () => {
-    const n = Math.min(100, Math.max(1, +cnt.value || 0));
-    if (!n) return;
-    cnt.value = n;
-    renderQs(n, [...qs.querySelectorAll("[data-q]")].map(i => i.value));
+  const sheets = (answers || []).map(x => `<div class="panel sheet"><b style="color:${col(x.user_name)}">${esc(x.user_name)}</b>
+    ${me.is_admin || x.user_id === me.id ? `<button data-a="${x.id}">حذف</button>` : ""}
+    ${x.items.map((t, i) => `<div>جواب سوال ${i + 1}: ${esc(t) || "—"}</div>`).join("")}</div>`).join("");
+  const form = `<div class="panel"><div class="row"><input id="cnt" type="number" min="1" max="100" placeholder="تعداد سوال‌ها"><button class="pb g" id="mk" style="margin:0">ساخت فرم</button></div>
+    <div id="qs"></div><button class="pb" id="save" hidden>ذخیره جواب‌های من</button></div>`;
+  $("pane").innerHTML = `${hdr(title, me.is_admin ? `<button class="ic" id="dalb">🗑</button>` : "")}
+    <button class="pin" id="pin"><span>📌</span><div><b>${showAns ? "بازگشت به عکس‌ها" : "جواب‌های امتحان"}</b><small>${(answers || []).length} نفر جواب گذاشته‌اند</small></div></button>
+    <div class="body" id="body">${showAns ? `<div style="direction:rtl">${form}${sheets}</div>`
+      : photos.map(bub).join("") || `<div class="empty">هنوز عکسی نیست. اولین نفر باش.</div>`}</div>
+    ${showAns ? "" : `<form class="comp" id="cf"><label class="ic" for="file" id="att">📎</label><input type="file" id="file" accept="image/*" hidden>
+      <input id="ci" placeholder="توضیح عکس (اختیاری)" autocomplete="off"><button class="send">➤</button></form>`}`;
+  bindHdr(); bottom(); zoom();
+  $("pin").onclick = () => { showAns = !showAns; renderAlbum(); };
+  if (me.is_admin) $("dalb").onclick = async () => {
+    if (!confirm("آلبوم و همه عکس‌هاش حذف بشه؟")) return;
+    if (photos.length) await sb.storage.from("photos").remove(photos.map(p => p.path));
+    await sb.from("albums").delete().eq("id", id);
+    cur = null; $("tg").classList.remove("in"); $("pane").innerHTML = `<div class="empty">یک گفتگو را انتخاب کن</div>`; loadAlbums();
   };
-  save.onclick = async () => {
-    const items = [...qs.querySelectorAll("[data-q]")].map(i => i.value.trim());
-    const r = await sb.from("answers").upsert({ album_id: id, user_id: me.id, user_name: me.name, items, updated_at: new Date().toISOString() }, { onConflict: "album_id,user_id" });
-    if (r.error) return alert("خطا در ذخیره");
-    photosView(id, title);
-  };
-  document.querySelectorAll("[data-a]").forEach(b => b.onclick = async () => {
-    if (!confirm("این جواب‌ها حذف بشه؟")) return;
-    await sb.from("answers").delete().eq("id", b.dataset.a);
-    photosView(id, title);
-  });
-  document.getElementById("file").onchange = e => {
-    const f = e.target.files[0]; if (!f) return;
-    document.querySelector(".drop").innerHTML = `<img src="${URL.createObjectURL(f)}" alt="">`;
-  };
-  document.getElementById("back").onclick = albumsView;
-  document.querySelectorAll(".photo img").forEach(i => i.onclick = () => {
-    const b = document.getElementById("big"); b.firstElementChild.src = i.src; b.style.display = "flex";
-  });
+  if (showAns) {
+    const qs = $("qs"), save = $("save"), cnt = $("cnt");
+    const rq = (n, vals = []) => { qs.innerHTML = Array.from({ length: n }, (_, i) => `<div><small>سوال ${i + 1}</small><input data-q value="${esc(vals[i] || "")}"></div>`).join(""); save.hidden = false; };
+    if (mine) { cnt.value = mine.items.length; rq(mine.items.length, mine.items); }
+    $("mk").onclick = () => { const n = Math.min(100, Math.max(1, +cnt.value || 0)); if (!n) return; cnt.value = n; rq(n, [...qs.querySelectorAll("[data-q]")].map(i => i.value)); };
+    save.onclick = async () => {
+      const items = [...qs.querySelectorAll("[data-q]")].map(i => i.value.trim());
+      const r = await sb.from("answers").upsert({ album_id: id, user_id: me.id, user_name: me.name, items, updated_at: new Date().toISOString() }, { onConflict: "album_id,user_id" });
+      r.error ? alert("خطا در ذخیره") : renderAlbum();
+    };
+    document.querySelectorAll("[data-a]").forEach(b => b.onclick = async () => { if (confirm("این جواب‌ها حذف بشه؟")) { await sb.from("answers").delete().eq("id", b.dataset.a); renderAlbum(); } });
+    return;
+  }
   document.querySelectorAll("[data-p]").forEach(b => b.onclick = async () => {
     if (!confirm("این عکس حذف بشه؟")) return;
-    await sb.storage.from("photos").remove([b.dataset.path]);
-    await sb.from("photos").delete().eq("id", b.dataset.p);
-    photosView(id, title);
+    await sb.storage.from("photos").remove([b.dataset.path]); await sb.from("photos").delete().eq("id", b.dataset.p); renderAlbum();
   });
-  document.getElementById("up").onclick = async () => {
-    const f = document.getElementById("file").files[0], err = document.getElementById("err");
-    if (!f) return err.textContent = "اول یه عکس انتخاب کن";
-    err.textContent = "در حال آپلود...";
-    const blob = await shrink(f);
-    const path = `${id}/${me.id}-${Date.now()}.jpg`;
+  $("file").onchange = e => { const f = e.target.files[0]; if (!f) return; $("att").classList.add("on"); $("ci").placeholder = "عکس انتخاب شد ✓ توضیح بنویس و بفرست"; };
+  $("cf").onsubmit = async e => {
+    e.preventDefault();
+    const f = $("file").files[0]; if (!f) return alert("اول با 📎 یه عکس انتخاب کن");
+    const btn = e.target.querySelector(".send"); btn.disabled = true;
+    const blob = await shrink(f), path = `${id}/${me.id}-${Date.now()}.jpg`;
     const up = await sb.storage.from("photos").upload(path, blob, { contentType: "image/jpeg" });
-    if (up.error) return err.textContent = "خطا در آپلود";
-    await sb.from("photos").insert({ album_id: id, user_id: me.id, uploader_name: me.name, path, description: v("desc") });
-    photosView(id, title);
+    if (up.error) { btn.disabled = false; return alert("خطا در آپلود"); }
+    await sb.from("photos").insert({ album_id: id, user_id: me.id, uploader_name: me.name, path, description: v("ci") });
+    renderAlbum();
   };
 }
-
-// kuchik kardan-e axa ta jaye zakhire kam masraf beshe
 function shrink(file, max = 1600) {
   return new Promise(res => {
     const img = new Image();
     img.onload = () => {
-      const s = Math.min(1, max / Math.max(img.width, img.height));
-      const c = document.createElement("canvas");
+      const s = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement("canvas");
       c.width = img.width * s; c.height = img.height * s;
-      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-      c.toBlob(res, "image/jpeg", 0.85);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); c.toBlob(res, "image/jpeg", 0.85);
     };
     img.src = URL.createObjectURL(file);
   });

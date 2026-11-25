@@ -6,34 +6,41 @@
 <title>گالری کلاس</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
-:root{--bg:#eef1f5;--card:#fff;--ink:#1b2a41;--mut:#6b7a90;--acc:#e4572e;--line:#d5dbe4}
-@media(prefers-color-scheme:dark){:root{--bg:#121a26;--card:#1b2635;--ink:#e8edf4;--mut:#93a1b5;--line:#2c3a4e}}
+:root{--bg:#f3f7f5;--card:#fff;--ink:#10231f;--mut:#5f766f;--acc:#0f9d7a;--on:#fff;--line:#d3e2dd}
+@media(prefers-color-scheme:dark){:root{--bg:#0c1513;--card:#14211e;--ink:#e5f2ee;--mut:#8fa8a0;--acc:#2dd4a7;--on:#06231b;--line:#243833}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.7 Vazirmatn,Tahoma,Segoe UI,sans-serif}
-header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--card)}
+header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--card)}
 header b{font-weight:900;font-size:20px}
 main{max-width:980px;margin:0 auto;padding:20px}
 h2{font-weight:900;margin:0 0 14px}
 button,input,textarea{font:inherit;color:inherit}
 input,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);margin-bottom:10px}
-button{cursor:pointer;border:0;border-radius:8px;padding:9px 16px;background:var(--acc);color:#fff;font-weight:700}
+button{cursor:pointer;border:0;border-radius:8px;padding:9px 16px;background:var(--acc);color:var(--on);font-weight:700}
 button.ghost{background:none;color:var(--mut);border:1px solid var(--line)}
-#online{color:#2e9e5b;border-color:#2e9e5b;margin-inline-end:8px}
+#online{color:var(--acc);border-color:var(--acc);margin-inline-end:8px}
 button.del{background:none;color:#c0392b;padding:2px 8px}
 :focus-visible{outline:3px solid var(--acc);outline-offset:2px}
-.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
 .auth{max-width:380px;margin:8vh auto}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.album{padding:22px 18px;border-radius:12px;background:var(--card);border:1px solid var(--line);border-inline-start:6px solid var(--acc);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:700}
-.photo{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.album{padding:22px 18px;border-radius:16px;background:var(--card);border:1px solid var(--line);border-inline-start:6px solid var(--acc);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.photo{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;cursor:zoom-in}
-.sheet{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px}.sheet b{display:inline-block;margin-bottom:6px}.sheet .del{float:left}
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;font-size:14px}.sheet b{display:inline-block;margin-bottom:6px}.sheet .del{float:left}
 label{display:block;font-size:13px;color:var(--mut)}
 .photo div{padding:10px 12px;font-size:14px}
 .photo small{color:var(--mut);display:flex;justify-content:space-between;align-items:center}
 .row{display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}.row input{margin:0}
 .err{color:#c0392b;min-height:24px;font-size:14px}
 .empty{color:var(--mut);padding:30px 0;text-align:center}
+header>span:first-child{display:flex;gap:8px;align-items:center}
+.chat{height:55vh;overflow:auto;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:80%;padding:6px 12px;border-radius:14px;background:var(--bg);border:1px solid var(--line);word-break:break-word}
+.msg small{display:block;color:var(--mut);font-size:12px}
+.msg.me{align-self:flex-end;background:var(--acc);color:var(--on);border-color:var(--acc)}
+.msg.me small{color:inherit;opacity:.75}
+.msg .del{color:inherit;font-size:12px}
 #big{position:fixed;inset:0;background:#000d;display:none;align-items:center;justify-content:center;z-index:9}
 #big img{max-width:95vw;max-height:95vh}
 </style>
@@ -82,11 +89,14 @@ function showOnline() {
 }
 
 function shell(inner) {
-  $app.innerHTML = `<header><b>گالری کلاس</b><span>
+  stopChat();
+  $app.innerHTML = `<header><span><b>گالری کلاس</b><button class="ghost" id="na">آلبوم‌ها</button><button class="ghost" id="nc">چت</button></span><span>
     <button class="ghost" id="online" title="لیست آنلاین‌ها"></button>
     ${esc(me.name)}${me.is_admin ? " (ادمین)" : ""}
     <button class="ghost" id="out">خروج</button></span></header><main>${inner}</main>`;
   showOnline();
+  document.getElementById("na").onclick = albumsView;
+  document.getElementById("nc").onclick = chatView;
   document.getElementById("online").onclick = () => alert("آنلاین‌ها:\n" + onlineNames.join("\n"));
   document.getElementById("out").onclick = async () => {
     if (ch) { await sb.removeChannel(ch); ch = null; }
@@ -126,6 +136,38 @@ function authView() {
   };
 }
 const v = id => document.getElementById(id).value.trim();
+
+// ===== chat room =====
+let chatCh = null;
+function stopChat() { if (chatCh) { sb.removeChannel(chatCh); chatCh = null; } }
+async function chatView() {
+  const { data: msgs } = await sb.from("messages").select("*").order("created_at", { ascending: false }).limit(100);
+  shell(`<h2>چت</h2><div class="box"><div class="chat" id="chat"></div>
+    <form class="row" id="cf" style="margin:12px 0 0"><input id="ci" maxlength="500" placeholder="پیام..." autocomplete="off"><button>ارسال</button></form></div>`);
+  const box = document.getElementById("chat");
+  const add = m => {
+    if (box.querySelector(`[data-m="${m.id}"]`)) return;
+    const d = document.createElement("div");
+    d.className = "msg" + (m.user_id === me.id ? " me" : "");
+    d.dataset.m = m.id;
+    d.innerHTML = `<small>${esc(m.user_name)}</small>${esc(m.body)}` +
+      (me.is_admin || m.user_id === me.id ? ` <button class="del" data-x="${m.id}">حذف</button>` : "");
+    box.appendChild(d); box.scrollTop = box.scrollHeight;
+  };
+  (msgs || []).reverse().forEach(add);
+  box.onclick = async e => { if (e.target.dataset.x) await sb.from("messages").delete().eq("id", e.target.dataset.x); };
+  chatCh = sb.channel("chat")
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, p => add(p.new))
+    .on("postgres_changes", { event: "DELETE", schema: "public", table: "messages" }, p => box.querySelector(`[data-m="${p.old.id}"]`)?.remove())
+    .subscribe();
+  document.getElementById("cf").onsubmit = async e => {
+    e.preventDefault();
+    const t = v("ci"); if (!t) return;
+    document.getElementById("ci").value = "";
+    const r = await sb.from("messages").insert({ user_id: me.id, user_name: me.name, body: t });
+    if (r.error) alert("ارسال نشد");
+  };
+}
 
 async function albumsView() {
   const { data: albums } = await sb.from("albums").select("*").order("created_at", { ascending: false });

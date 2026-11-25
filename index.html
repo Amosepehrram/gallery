@@ -4,13 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>گالری کلاس</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
 :root{--bg:#0f0f10;--panel:#212121;--line:#303030;--ink:#fff;--mut:#9b9b9b;--acc:#8774e1;--in:#212121;--out:#766ac8;--outink:#fff;--hover:#2b2b2b;--wp:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='none' stroke='%23fff' stroke-opacity='.07' stroke-width='2'%3E%3Ccircle cx='20' cy='22' r='9'/%3E%3Cpath d='M70 14l6 12 13 2-10 9 3 13-12-7-12 7 3-13-10-9 13-2z'/%3E%3Cpath d='M12 78c8-10 16 10 24 0s16 10 24 0'/%3E%3Crect x='80' y='70' width='22' height='22' rx='5'/%3E%3Cpath d='M44 104l10-14 10 14z'/%3E%3C/svg%3E")}
 @media(prefers-color-scheme:light){:root{--bg:#dfe8d6;--panel:#fff;--line:#e6e6e6;--ink:#000;--mut:#707579;--acc:#3390ec;--in:#fff;--out:#eeffde;--outink:#000;--hover:#f1f1f1;--wp:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='none' stroke='%23000' stroke-opacity='.06' stroke-width='2'%3E%3Ccircle cx='20' cy='22' r='9'/%3E%3Cpath d='M70 14l6 12 13 2-10 9 3 13-12-7-12 7 3-13-10-9 13-2z'/%3E%3Cpath d='M12 78c8-10 16 10 24 0s16 10 24 0'/%3E%3Crect x='80' y='70' width='22' height='22' rx='5'/%3E%3Cpath d='M44 104l10-14 10 14z'/%3E%3C/svg%3E")}}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--ink);font:400 15px/1.6 Tahoma,"Segoe UI",sans-serif}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.75 Vazirmatn,Tahoma,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-feature-settings:"kern","liga"}
+b,h2{font-weight:600}h2{font-size:24px;margin:.2em 0 .6em}
+input::placeholder{color:var(--mut);opacity:.85;font-size:14px}
+.msg small,.it small,.hd small{font-variant-numeric:tabular-nums}
+.msg{font-size:14.5px;line-height:1.8}
+.it b{font-size:15.5px}.hd b{font-size:16px}
 button,input{font:inherit;color:inherit}
 button{cursor:pointer;border:0;background:none}
 input{width:100%;border:1px solid var(--line);background:transparent;border-radius:12px;padding:11px 14px;outline:0}
@@ -28,7 +34,7 @@ input:focus{border-color:var(--acc)}
 .it{display:flex;gap:12px;align-items:center;width:100%;text-align:right;padding:9px 10px;border-radius:14px}
 .it:hover{background:var(--hover)}.it.act{background:var(--acc);color:#fff}.it.act small{color:#ffffffcc}
 .it div{min-width:0;flex:1}.it b{display:block;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-small{color:var(--mut);font-size:13px}
+small{color:var(--mut);font-size:12.5px;font-weight:400}
 .av{display:inline-grid;place-items:center;flex:none;width:52px;height:52px;border-radius:50%;color:#fff;font-weight:700;font-size:20px}
 #pane{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--bg) var(--wp);direction:rtl}
 .hd{display:flex;align-items:center;gap:10px;margin:10px 12px 0;padding:6px 12px 6px 8px;background:var(--panel);border-radius:22px;box-shadow:0 2px 12px #0003}

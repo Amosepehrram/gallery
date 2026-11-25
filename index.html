@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>گالری کلاس</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--bg:#eef1f5;--card:#fff;--ink:#1b2a41;--mut:#6b7a90;--acc:#e4572e;--line:#d5dbe4}
+@media(prefers-color-scheme:dark){:root{--bg:#121a26;--card:#1b2635;--ink:#e8edf4;--mut:#93a1b5;--line:#2c3a4e}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.7 Vazirmatn,Tahoma,sans-serif}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--card)}
+header b{font-weight:900;font-size:20px}
+main{max-width:980px;margin:0 auto;padding:20px}
+h2{font-weight:900;margin:0 0 14px}
+button,input,textarea{font:inherit;color:inherit}
+input,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);margin-bottom:10px}
+button{cursor:pointer;border:0;border-radius:8px;padding:9px 16px;background:var(--acc);color:#fff;font-weight:700}
+button.ghost{background:none;color:var(--mut);border:1px solid var(--line)}
+button.del{background:none;color:#c0392b;padding:2px 8px}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+.auth{max-width:380px;margin:8vh auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.album{padding:22px 18px;border-radius:12px;background:var(--card);border:1px solid var(--line);border-inline-start:6px solid var(--acc);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.photo{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;cursor:zoom-in}
+.photo div{padding:10px 12px;font-size:14px}
+.photo small{color:var(--mut);display:flex;justify-content:space-between;align-items:center}
+.row{display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}.row input{margin:0}
+.err{color:#c0392b;min-height:24px;font-size:14px}
+.empty{color:var(--mut);padding:30px 0;text-align:center}
+#big{position:fixed;inset:0;background:#000d;display:none;align-items:center;justify-content:center;z-index:9}
+#big img{max-width:95vw;max-height:95vh}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="big" onclick="this.style.display='none'"><img alt=""></div>
+<script>
+// ====== inja do ta meghdar ro az Supabase > Project Settings > API bezar ======
+const SUPABASE_URL = "https://dveinkpgdnehsfsyiool.supabase.co";
+const SUPABASE_KEY = "KkK80KPNkVMaMZwFc1rijA_CmAiv6iU";
+// ==============================================================================
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $app = document.getElementById("app");
+let me = null, mode = "login";
+const esc = s => (s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return authView();
+  const { data } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
+  me = { ...data, id: session.user.id };
+  albumsView();
+}
+
+function shell(inner) {
+  $app.innerHTML = `<header><b>گالری کلاس</b><span>${esc(me.name)}${me.is_admin ? " (ادمین)" : ""}
+    <button class="ghost" id="out">خروج</button></span></header><main>${inner}</main>`;
+  document.getElementById("out").onclick = async () => { await sb.auth.signOut(); me = null; authView(); };
+}
+
+function authView() {
+  const su = mode === "signup";
+  $app.innerHTML = `<form class="box auth" id="f"><h2>${su ? "ساخت حساب" : "ورود"}</h2>
+    ${su ? `<input id="name" placeholder="نام و نام خانوادگی" required>` : ""}
+    <input id="email" type="email" placeholder="ایمیل" required dir="ltr">
+    <input id="pass" type="password" placeholder="رمز عبور (حداقل ۶ کاراکتر)" minlength="6" required dir="ltr">
+    ${su ? `<input id="invite" placeholder="کد دعوت" required dir="ltr">` : ""}
+    <div class="err" id="err"></div>
+    <button style="width:100%">${su ? "ثبت‌نام" : "ورود"}</button>
+    <p style="text-align:center"><a href="#" id="sw">${su ? "حساب دارم، ورود" : "حساب ندارم، ثبت‌نام با کد دعوت"}</a></p></form>`;
+  const err = m => document.getElementById("err").textContent = m;
+  document.getElementById("sw").onclick = e => { e.preventDefault(); mode = su ? "login" : "signup"; authView(); };
+  document.getElementById("f").onsubmit = async e => {
+    e.preventDefault();
+    const email = v("email"), password = v("pass");
+    const r = su
+      ? await sb.auth.signUp({ email, password, options: { data: { name: v("name"), invite: v("invite") } } })
+      : await sb.auth.signInWithPassword({ email, password });
+    if (r.error) return err(/database error|invite/i.test(r.error.message) ? "کد دعوت اشتباه است" : "خطا: " + r.error.message);
+    init();
+  };
+}
+const v = id => document.getElementById(id).value.trim();
+
+async function albumsView() {
+  const { data: albums } = await sb.from("albums").select("*").order("created_at", { ascending: false });
+  shell(`<h2>آلبوم‌ها</h2>
+    ${me.is_admin ? `<div class="row"><input id="t" placeholder="نام آلبوم جدید، مثلا: امتحان علوم"><button id="add">ساخت</button></div>` : ""}
+    <div class="grid">${albums.map(a => `<div class="album" data-id="${a.id}" data-t="${esc(a.title)}"><span>${esc(a.title)}</span>
+      ${me.is_admin ? `<button class="del" data-del="${a.id}">حذف</button>` : ""}</div>`).join("") || `<div class="empty">هنوز آلبومی نیست.</div>`}</div>`);
+  document.querySelectorAll(".album").forEach(el => el.onclick = e => {
+    if (e.target.dataset.del) return;
+    photosView(+el.dataset.id, el.dataset.t);
+  });
+  document.querySelectorAll("[data-del]").forEach(b => b.onclick = async () => {
+    if (!confirm("آلبوم و همه عکس‌هاش حذف بشه؟")) return;
+    const { data: ps } = await sb.from("photos").select("path").eq("album_id", b.dataset.del);
+    if (ps.length) await sb.storage.from("photos").remove(ps.map(p => p.path));
+    await sb.from("albums").delete().eq("id", b.dataset.del);
+    albumsView();
+  });
+  if (me.is_admin) document.getElementById("add").onclick = async () => {
+    if (!v("t")) return;
+    await sb.from("albums").insert({ title: v("t") });
+    albumsView();
+  };
+}
+
+async function photosView(id, title) {
+  const { data: photos } = await sb.from("photos").select("*").eq("album_id", id).order("created_at", { ascending: false });
+  shell(`<p><button class="ghost" id="back">بازگشت</button></p><h2>${esc(title)}</h2>
+    <div class="box" style="margin-bottom:18px"><input type="file" id="file" accept="image/*">
+    <textarea id="desc" rows="2" placeholder="توضیح (اختیاری)"></textarea>
+    <button id="up">آپلود عکس</button> <span class="err" id="err"></span></div>
+    <div class="grid">${photos.map(p => {
+      const url = sb.storage.from("photos").getPublicUrl(p.path).data.publicUrl;
+      return `<div class="photo"><img src="${url}" alt="" loading="lazy">
+        <div>${esc(p.description)}<small><span>${esc(p.uploader_name)}</span>
+        ${me.is_admin || p.user_id === me.id ? `<button class="del" data-p="${p.id}" data-path="${esc(p.path)}">حذف</button>` : ""}</small></div></div>`;
+    }).join("") || `<div class="empty">هنوز عکسی نیست. اولین نفر باش.</div>`}</div>`);
+  document.getElementById("back").onclick = albumsView;
+  document.querySelectorAll(".photo img").forEach(i => i.onclick = () => {
+    const b = document.getElementById("big"); b.firstElementChild.src = i.src; b.style.display = "flex";
+  });
+  document.querySelectorAll("[data-p]").forEach(b => b.onclick = async () => {
+    if (!confirm("این عکس حذف بشه؟")) return;
+    await sb.storage.from("photos").remove([b.dataset.path]);
+    await sb.from("photos").delete().eq("id", b.dataset.p);
+    photosView(id, title);
+  });
+  document.getElementById("up").onclick = async () => {
+    const f = document.getElementById("file").files[0], err = document.getElementById("err");
+    if (!f) return err.textContent = "اول یه عکس انتخاب کن";
+    err.textContent = "در حال آپلود...";
+    const blob = await shrink(f);
+    const path = `${id}/${me.id}-${Date.now()}.jpg`;
+    const up = await sb.storage.from("photos").upload(path, blob, { contentType: "image/jpeg" });
+    if (up.error) return err.textContent = "خطا در آپلود";
+    await sb.from("photos").insert({ album_id: id, user_id: me.id, uploader_name: me.name, path, description: v("desc") });
+    photosView(id, title);
+  };
+}
+
+// kuchik kardan-e axa ta jaye zakhire kam masraf beshe
+function shrink(file, max = 1600) {
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = img.width * s; c.height = img.height * s;
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob(res, "image/jpeg", 0.85);
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+init();
+</script>
+</body>
+</html>

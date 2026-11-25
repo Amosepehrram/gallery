@@ -26,21 +26,39 @@ button.del{background:none;color:#c0392b;padding:2px 8px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
 .album{padding:22px 18px;border-radius:16px;background:var(--card);border:1px solid var(--line);border-inline-start:6px solid var(--acc);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:700}
 .photo{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-.photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;cursor:zoom-in}
+.photo img{width:100%;aspect-ratio:1;object-fit:cover;display:block;cursor:zoom-in}
 .sheet{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;font-size:14px}.sheet b{display:inline-block;margin-bottom:6px}.sheet .del{float:left}
 label{display:block;font-size:13px;color:var(--mut)}
-.photo div{padding:10px 12px;font-size:14px}
-.photo small{color:var(--mut);display:flex;justify-content:space-between;align-items:center}
 .row{display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}.row input{margin:0}
 .err{color:#c0392b;min-height:24px;font-size:14px}
 .empty{color:var(--mut);padding:30px 0;text-align:center}
-header>span:first-child{display:flex;gap:8px;align-items:center}
 .chat{height:55vh;overflow:auto;display:flex;flex-direction:column;gap:8px}
 .msg{max-width:80%;padding:6px 12px;border-radius:14px;background:var(--bg);border:1px solid var(--line);word-break:break-word}
 .msg small{display:block;color:var(--mut);font-size:12px}
 .msg.me{align-self:flex-end;background:var(--acc);color:var(--on);border-color:var(--acc)}
 .msg.me small{color:inherit;opacity:.75}
 .msg .del{color:inherit;font-size:12px}
+
+main{padding-top:24px}
+header b{flex:1;text-align:center}
+.ic{background:none;color:var(--ink);font-size:26px;padding:0 8px;line-height:1}
+#ov{position:fixed;inset:0;background:#0008;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+#dr{position:fixed;top:0;bottom:0;right:0;width:270px;max-width:82vw;background:var(--card);z-index:21;transform:translateX(100%);transition:transform .25s;padding:22px 16px;display:flex;flex-direction:column;gap:4px}
+body.open #ov{opacity:1;pointer-events:auto}body.open #dr{transform:none}
+#dr .who{display:flex;gap:12px;align-items:center;padding-bottom:18px;margin-bottom:10px;border-bottom:1px solid var(--line)}
+#dr small{color:var(--mut)}
+#dr .it{background:none;color:var(--ink);text-align:right;font-size:17px;padding:13px 12px;border-radius:12px;width:100%}
+#dr .it:hover{background:var(--bg)}
+#dr .out{margin-top:auto;color:#d6455d}
+.av{display:inline-grid;place-items:center;flex:none;width:34px;height:34px;border-radius:50%;background:linear-gradient(45deg,#f9a03f,#e1306c,#6c5ce7);color:#fff;font-weight:700}
+.av.big{width:48px;height:48px;font-size:20px}
+.feed{max-width:470px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.photo{border-radius:14px}
+.ph{display:flex;align-items:center;gap:10px;padding:10px 12px}
+.ph .del{margin-inline-start:auto}
+.cap{padding:10px 14px 14px;font-size:15px}
+.album{background:linear-gradient(135deg,var(--acc),#6c5ce7);color:#fff;border:0;min-height:110px;font-size:18px;align-items:flex-end}
+.album .del{color:#fff;opacity:.85}
 #big{position:fixed;inset:0;background:#000d;display:none;align-items:center;justify-content:center;z-index:9}
 #big img{max-width:95vw;max-height:95vh}
 </style>
@@ -90,10 +108,17 @@ function showOnline() {
 
 function shell(inner) {
   stopChat();
-  $app.innerHTML = `<header><span><b>گالری کلاس</b><button class="ghost" id="na">آلبوم‌ها</button><button class="ghost" id="nc">چت</button></span><span>
-    <button class="ghost" id="online" title="لیست آنلاین‌ها"></button>
-    ${esc(me.name)}${me.is_admin ? " (ادمین)" : ""}
-    <button class="ghost" id="out">خروج</button></span></header><main>${inner}</main>`;
+  document.body.classList.remove("open");
+  const ini = esc((me.name || "?")[0]);
+  $app.innerHTML = `<header><button class="ic" id="mn" aria-label="منو">☰</button><b>گالری کلاس</b>
+    <button class="ghost" id="online" title="لیست آنلاین‌ها"></button></header>
+    <div id="ov"></div>
+    <aside id="dr"><div class="who"><span class="av big">${ini}</span><div><b>${esc(me.name)}</b><br><small>${me.is_admin ? "ادمین" : "کاربر"}</small></div></div>
+      <button class="it" id="na">آلبوم‌ها</button><button class="it" id="nc">چت</button>
+      <button class="it out" id="out">خروج</button></aside><main>${inner}</main>`;
+  const close = () => document.body.classList.remove("open");
+  document.getElementById("mn").onclick = () => document.body.classList.toggle("open");
+  document.getElementById("ov").onclick = close;
   showOnline();
   document.getElementById("na").onclick = albumsView;
   document.getElementById("nc").onclick = chatView;
@@ -201,11 +226,12 @@ async function photosView(id, title) {
     <div class="box" style="margin-bottom:18px"><input type="file" id="file" accept="image/*">
     <textarea id="desc" rows="2" placeholder="توضیح (اختیاری)"></textarea>
     <button id="up">آپلود عکس</button> <span class="err" id="err"></span></div>
-    <div class="grid">${photos.map(p => {
+    <div class="feed">${photos.map(p => {
       const url = sb.storage.from("photos").getPublicUrl(p.path).data.publicUrl;
-      return `<div class="photo"><img src="${url}" alt="" loading="lazy">
-        <div>${esc(p.description)}<small><span>${esc(p.uploader_name)}</span>
-        ${me.is_admin || p.user_id === me.id ? `<button class="del" data-p="${p.id}" data-path="${esc(p.path)}">حذف</button>` : ""}</small></div></div>`;
+      return `<div class="photo"><div class="ph"><span class="av">${esc((p.uploader_name || "?")[0])}</span><b>${esc(p.uploader_name)}</b>
+        ${me.is_admin || p.user_id === me.id ? `<button class="del" data-p="${p.id}" data-path="${esc(p.path)}">حذف</button>` : ""}</div>
+        <img src="${url}" alt="" loading="lazy">
+        ${p.description ? `<div class="cap"><b>${esc(p.uploader_name)}</b> ${esc(p.description)}</div>` : ""}</div>`;
     }).join("") || `<div class="empty">هنوز عکسی نیست. اولین نفر باش.</div>`}</div>
     <h2 style="margin-top:34px">جواب‌ها</h2>
     <div class="box" style="margin-bottom:18px">

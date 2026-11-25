@@ -27,6 +27,8 @@ button.del{background:none;color:#c0392b;padding:2px 8px}
 .album{padding:22px 18px;border-radius:12px;background:var(--card);border:1px solid var(--line);border-inline-start:6px solid var(--acc);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:700}
 .photo{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .photo img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;cursor:zoom-in}
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px}.sheet b{display:inline-block;margin-bottom:6px}.sheet .del{float:left}
+label{display:block;font-size:13px;color:var(--mut)}
 .photo div{padding:10px 12px;font-size:14px}
 .photo small{color:var(--mut);display:flex;justify-content:space-between;align-items:center}
 .row{display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}.row input{margin:0}
@@ -151,6 +153,8 @@ async function albumsView() {
 
 async function photosView(id, title) {
   const { data: photos } = await sb.from("photos").select("*").eq("album_id", id).order("created_at", { ascending: false });
+  const { data: answers } = await sb.from("answers").select("*").eq("album_id", id).order("updated_at");
+  const mine = (answers || []).find(x => x.user_id === me.id);
   shell(`<p><button class="ghost" id="back">بازگشت</button></p><h2>${esc(title)}</h2>
     <div class="box" style="margin-bottom:18px"><input type="file" id="file" accept="image/*">
     <textarea id="desc" rows="2" placeholder="توضیح (اختیاری)"></textarea>
@@ -160,7 +164,38 @@ async function photosView(id, title) {
       return `<div class="photo"><img src="${url}" alt="" loading="lazy">
         <div>${esc(p.description)}<small><span>${esc(p.uploader_name)}</span>
         ${me.is_admin || p.user_id === me.id ? `<button class="del" data-p="${p.id}" data-path="${esc(p.path)}">حذف</button>` : ""}</small></div></div>`;
-    }).join("") || `<div class="empty">هنوز عکسی نیست. اولین نفر باش.</div>`}</div>`);
+    }).join("") || `<div class="empty">هنوز عکسی نیست. اولین نفر باش.</div>`}</div>
+    <h2 style="margin-top:34px">جواب‌ها</h2>
+    <div class="box" style="margin-bottom:18px">
+      <div class="row"><input id="cnt" type="number" min="1" max="100" placeholder="تعداد سوال‌های امتحان" style="max-width:220px"><button id="mk" class="ghost">ساخت فرم</button></div>
+      <div id="qs"></div><button id="save" hidden>ذخیره جواب‌های من</button>
+    </div>
+    <div class="grid">${(answers || []).map(x => `<div class="sheet"><b>${esc(x.user_name)}</b>
+      ${me.is_admin || x.user_id === me.id ? `<button class="del" data-a="${x.id}">حذف</button>` : ""}
+      ${x.items.map((t, i) => `<div>جواب سوال ${i + 1}: ${esc(t) || "—"}</div>`).join("")}</div>`).join("") || `<div class="empty">هنوز کسی جواب نگذاشته.</div>`}</div>`);
+  const qs = document.getElementById("qs"), cnt = document.getElementById("cnt"), save = document.getElementById("save");
+  const renderQs = (n, vals = []) => {
+    qs.innerHTML = Array.from({ length: n }, (_, i) => `<label>سوال ${i + 1}</label><input data-q value="${esc(vals[i] || "")}">`).join("");
+    save.hidden = false;
+  };
+  if (mine) { cnt.value = mine.items.length; renderQs(mine.items.length, mine.items); }
+  document.getElementById("mk").onclick = () => {
+    const n = Math.min(100, Math.max(1, +cnt.value || 0));
+    if (!n) return;
+    cnt.value = n;
+    renderQs(n, [...qs.querySelectorAll("[data-q]")].map(i => i.value));
+  };
+  save.onclick = async () => {
+    const items = [...qs.querySelectorAll("[data-q]")].map(i => i.value.trim());
+    const r = await sb.from("answers").upsert({ album_id: id, user_id: me.id, user_name: me.name, items, updated_at: new Date().toISOString() }, { onConflict: "album_id,user_id" });
+    if (r.error) return alert("خطا در ذخیره");
+    photosView(id, title);
+  };
+  document.querySelectorAll("[data-a]").forEach(b => b.onclick = async () => {
+    if (!confirm("این جواب‌ها حذف بشه؟")) return;
+    await sb.from("answers").delete().eq("id", b.dataset.a);
+    photosView(id, title);
+  });
   document.getElementById("back").onclick = albumsView;
   document.querySelectorAll(".photo img").forEach(i => i.onclick = () => {
     const b = document.getElementById("big"); b.firstElementChild.src = i.src; b.style.display = "flex";
